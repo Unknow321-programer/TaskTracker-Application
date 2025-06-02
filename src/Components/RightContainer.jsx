@@ -1,9 +1,13 @@
 import React, { useState } from "react";
-import { faBarsStaggered, faBell, faDisplay, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faBarsStaggered, faBell, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./RightContainer.css"
+import { prettyDOM } from "@testing-library/dom";
 
 const RightContainer = () => {
+
+    const [tasks , setTasks] = useState([]);
+    const [checkboxStatus, setCheckboxStatus] = useState(false);
 
     const [buttonAddTask, setButtonAddTask]   = useState(
         {display:"none",buttonText:"+ Add Task"});
@@ -17,6 +21,48 @@ const RightContainer = () => {
             setButtonAddTask({display:"none",buttonText:"+ Add Task"});
         }
     }
+
+    const handleNewTask = () => {
+        let des = document.getElementById("description").value;
+        let date = document.getElementById("date").value;
+        let tag = document.getElementById("tag").value;
+        let priority = document.getElementById("selected").value;
+
+        const task = {
+            id: tasks.length,
+            destext:des, 
+            taskdate:date, 
+            tagtext: tag, 
+            prioritychoice:priority, 
+            checkbox:false
+        };
+        setTasks(pretasks => [...pretasks, task]);
+    }
+
+    const handleTableCheckbox = (e) => {
+        if(e.target.id == "topcheck") {
+            if(checkboxStatus) checkboxStatus=false;
+            else checkboxStatus= true;
+
+            for(let i =0 ; i< tasks.length; i++) {
+                tasks[i].checkbox = checkboxStatus;
+            }
+            setTasks((prevtask) => [...prevtask]);
+        }
+        else {
+            let index = e.target.id;
+            if(tasks[index].checkbox == true) {
+                tasks[index].checkbox = false;
+            }
+            else {
+                tasks[index].checkbox = true;
+            }
+            setTasks( (pretask) =>
+                [...pretask]);
+        }
+    }
+
+
     return (
         <div className="rightcontainer">
             <nav>
@@ -32,14 +78,15 @@ const RightContainer = () => {
 
             <button className="addtask" onClick={handleButton} value={buttonAddTask.buttonText}>{buttonAddTask.buttonText}</button>
             <div className="newtaskinput" style={{display:buttonAddTask.display}}>
-                <input type="text" name="description" id="description" />
-                <input type="date" />
-                <input type="text" />
-                <select>
+                <input type="text" name="description" id="description" placeholder="Description"/>
+                <input type="date" placeholder="Date" name="date" id="date"/>
+                <input type="text" placeholder="Tags" name="tag" id="tag"/>
+                <select name="selected" id="selected">
                     <option>High</option>
                     <option>Medium</option>
                     <option>Low</option>
                 </select>
+                <button className="addtask" onClick={handleNewTask}>Add</button>
             </div>
 
             <div className="taskprogress">
@@ -72,7 +119,7 @@ const RightContainer = () => {
                     <thead>
                         <tr>
                             <th>
-                                <input type="checkbox" name="" id="" />
+                                <input type="checkbox" name="tocheck" id="topcheck" onChange={handleTableCheckbox}/>
                             </th>
                             <th>
                                 Task
@@ -92,36 +139,31 @@ const RightContainer = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        {tasks.map((data,i=0) => 
+                            <tr key={data.id}>
                             <td>
-                                <input type="checkbox" name="" id="" />
+                                <input type="checkbox" name="" id={i} checked={data.checkbox} onChange={handleTableCheckbox}/>
                             </td>
                             <td>
-                                Design Homepage
+                                {data.destext}
                             </td>
                             <td>
-                                Today
+                                {data.taskdate}
                             </td>
                             <td>
-                                Design
+                                {data.tagtext}
                             </td>
                             <td>
-                                High
+                                {data.prioritychoice}
+                                {i++}
                             </td>
                             <td>
                                 <img src="https://www.google.com/imgres?q=google%20images&imgurl=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F2%2F2f%2FGoogle_2015_logo.svg%2F800px-Google_2015_logo.svg.png&imgrefurl=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FGoogle_logo&docid=YYcJ4Dx_qJL9iM&tbnid=ouvlTYelZsinyM&vet=12ahUKEwjE2YuzpMSNAxWynK8BHZcdMFwQM3oECBYQAA..i&w=800&h=271&hcb=2&itg=1&ved=2ahUKEwjE2YuzpMSNAxWynK8BHZcdMFwQM3oECBYQAA"
                                 alt="no"/>
                             </td>
                         </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr></tr>
+                        )}
+
                     </tbody>
                 </table>
             </div>

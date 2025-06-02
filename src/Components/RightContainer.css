@@ -52,6 +52,11 @@ nav {
     cursor: pointer;
 }
 
+/* new task inputs */
+.newtaskinput input, .newtaskinput select {
+    margin-left: 10px;
+    padding: 3px 8px;
+}
 
 /* task progress style section */
 .taskprogress {
